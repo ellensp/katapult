@@ -1,0 +1,98 @@
+# Kconfig settings for LPC55xx processors
+
+if MACH_LPC55
+
+config LPC55_SELECT
+    bool
+    default y
+    select HAVE_BOARD_FLASH_READ
+
+config BOARD_DIRECTORY
+    string
+    default "lpc55"
+
+choice
+    prompt "Processor model"
+    config MACH_LPC5528
+        bool "lpc5528"
+endchoice
+
+config MCU
+    string
+    default "lpc5528"
+
+# The core runs from the internal FRO_HF (96MHz) divided by two. This
+# stays within the regulator's power-on voltage, so no ROM power API
+# calls are needed.
+config CLOCK_FREQ
+    int
+    default 48000000
+
+config FLASH_SIZE
+    hex
+    default 0x80000
+
+config FLASH_BOOT_ADDRESS
+    hex
+    default 0x0
+
+# The boot ROM keeps global data in the first 16KiB of SRAM0 and the
+# ROM flash API uses the last 32 bytes of SRAM0, so stay clear of both.
+config RAM_START
+    hex
+    default 0x20004000
+
+config RAM_SIZE
+    hex
+    default 0xbfe0
+
+config STACK_SIZE
+    int
+    default 512
+
+config FLASH_APPLICATION_ADDRESS
+    hex
+    default 0x0
+
+
+######################################################################
+# Communication inteface
+######################################################################
+
+choice
+    prompt "Communication interface"
+    config LPC55_USB0
+        bool "USB (full-speed USB0)"
+        select USBSERIAL
+endchoice
+
+
+######################################################################
+# Flash settings
+######################################################################
+
+config FLASH_START
+    hex
+    default 0x0
+
+choice
+    prompt "Application start offset"
+    config LPC55_APP_START_2000
+        bool "8KiB offset"
+    config LPC55_APP_START_4000
+        bool "16KiB offset"
+    config LPC55_APP_START_8000
+        bool "32KiB offset"
+endchoice
+
+config LAUNCH_APP_ADDRESS
+    hex
+    default 0x2000 if LPC55_APP_START_2000
+    default 0x4000 if LPC55_APP_START_4000
+    default 0x8000 if LPC55_APP_START_8000
+
+config BLOCK_SIZE
+    int
+    default 64
+
+endif

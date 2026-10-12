@@ -42,12 +42,20 @@ def update_lpc176x_checksum(data):
     csum = (-sum(words)) & 0xffffffff
     return data28 + struct.pack('<I', csum) + data[32:]
 
+def clear_lpc55_image_header(data):
+    # The LPC55 boot ROM reads an image header from vector table
+    # entries 8-10 (image length, image type, header offset). Zero
+    # them so the ROM treats the binary as a plain image.
+    return data[:32] + struct.pack('<III', 0, 0, 0) + data[44:]
+
 def main():
     parser = argparse.ArgumentParser(description="Build Katapult binary")
     parser.add_argument("-b", "--base", help="Address of flash start")
     parser.add_argument("-s", "--start", help="Address of application start")
     parser.add_argument("-l", "--lpc176x", action='store_true',
                         help="Perform lpc176x checksum")
+    parser.add_argument("--lpc55", action='store_true',
+                        help="Clear lpc55 boot ROM image header fields")
     parser.add_argument("-c", "--code", help="C code file containing binary")
     parser.add_argument("input_file", help="Raw binary filename")
     parser.add_argument("output_file", help="Final binary filename")
@@ -68,6 +76,8 @@ def main():
 
     if args.lpc176x:
         data = update_lpc176x_checksum(data)
+    if args.lpc55:
+        data = clear_lpc55_image_header(data)
 
     if args.code:
         f = open(args.code, 'w')

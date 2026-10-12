@@ -10,6 +10,7 @@
 uint64_t get_bootup_code(void);
 void set_bootup_code(uint64_t code);
 void application_read_flash(uint32_t address, uint32_t *dest);
+void board_flash_read(uint32_t address, uint32_t *dest);
 int application_check_valid(void);
 void application_jump(void);
 

@@ -53,15 +53,26 @@ set_bootup_code(uint64_t code)
 void
 application_read_flash(uint32_t address, uint32_t *dest)
 {
+#if CONFIG_HAVE_BOARD_FLASH_READ
+    // Board can't read erased flash directly
+    board_flash_read(address, dest);
+#else
     memcpy(dest, (void*)address, CONFIG_BLOCK_SIZE);
+#endif
 }
 
 // Check if the application flash area looks valid
 int
 application_check_valid(void)
 {
+#if CONFIG_HAVE_BOARD_FLASH_READ
+    uint32_t app[CONFIG_BLOCK_SIZE / 4];
+    board_flash_read(CONFIG_LAUNCH_APP_ADDRESS, app);
+    return app[0] != 0 && app[0] != 0xffffffff;
+#else
     uint32_t *app = (void*)CONFIG_LAUNCH_APP_ADDRESS;
     return *app != 0 && *app != 0xffffffff;
+#endif
 }
 
 // Jump to the main application (exiting the bootloader)

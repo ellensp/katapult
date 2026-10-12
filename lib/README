@@ -136,3 +136,9 @@ callbacks.
 The can2040 directory contains code from:
   https://github.com/KevinOConnor/can2040
 commit 13321ce2bc046e059a47def70f977a579a984462.
+
+The lpc55 directory contains code from:
+  https://github.com/nxp-mcuxpresso/mcux-sdk
+LPC5528.h rev. 1.1 build b231019 (extracted 20261012). Contents taken
+from the devices/LPC5528/ directory (LPC5528.h, LPC5528_features.h and
+system_LPC5528.h only).
